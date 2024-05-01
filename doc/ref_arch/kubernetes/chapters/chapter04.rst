@@ -167,6 +167,12 @@ the following specifications:
        the Kubernetes Cluster.
      - tbd
      - :cite:t:`anuket-ri2` Chapter 4, section Installation on Bare Metal Infratructure
+   * - ra2.ch.019
+     - AF_XDP Zero Copy capable netdevs
+     - AF_XDP Zero Copy capable netdevs (dependent on AF_XDP Zero Copy NIC driver) must be available in a compliant
+       Kubernetes worker node if optional AF_XDP is used.
+     - e.cap.025 from :cite:t:`refmodel` Chapter 4, section Exposed infrastructure capabilities
+     -
 
 Node Operating System
 ---------------------
@@ -229,6 +235,9 @@ Table 4.3 lists the kernel versions that comply with this Reference Architecture
      - 4.x
      - The overlay filesystem snapshotter, used by default by containerd, uses features that were finalized in the 4.x
        kernel series.
+   * - Linux
+     - >= 4.18
+     - If using optional AF_XDP (see ra2.ch.019).
    * - Windows
      - 1809 (10.0.17763)
      - For worker nodes only.
@@ -286,8 +295,11 @@ the following specifications:
      -
    * - ra2.k8s.005
      - Kubernetes API Version
-     - In alignment with the :cite:t:`k8s-version-skew-policy`, an implementation must use a Kubernetes version as per
+     - An implementation must use a Kubernetes version as per
        the subcomponent versions table in :ref:`chapters/chapter01:required component versions`.
+       In alignment with the :cite:t:`k8s-version-skew-policy`, the difference between the kubernetes release of the
+       control plane nodes and the kubernetes release of the worker nodes must be at most **3** releases
+       (i.e. a n-3 skew).
      -
      -
    * - ra2.k8s.006
@@ -303,7 +315,7 @@ the following specifications:
           is enabled by default in Kubernetes v1.10 and later.
 
      - e.cap.007 in :ref:`chapters/chapter02:cloud infrastructure software profile capabilities`,
-       infra.com.cfg.002 in :ref:`ref_model:chapters/chapter05:Virtual Compute Profiles`, e.cap.013 :cite:t:`refmodel`
+       infra.com.cfg.002 in :cite:t:`refmodel`, e.cap.013 :cite:t:`refmodel`
        Chapter 8, section Exposed Performance Optimisation Capabilities
      -
    * - ra2.k8s.007
@@ -405,6 +417,12 @@ the following specifications:
        of the same version doesn't exist, or for APIs listed in RA2 Ch6 list of Mandatory API Groups.
      - int.api.04 in :ref:`chapters/chapter02:kubernetes architecture requirements`
      -
+   * - ra2.k8s.020
+     - TLS Certificate management for workloads
+     - Cert-manager :cite:p:`cert-manager` should be supported and integrated with a PKI certificate provider for workloads to
+       request/renew TLS certificates.
+     - int.api.04 in :ref:`chapters/chapter02:kubernetes architecture requirements`
+     - kcm.gen.03
 
 Container runtimes
 ------------------
@@ -746,75 +764,75 @@ Architecture, they must be implemented according to the following specifications
    * - ra2.app.011
      - Published helm chart
      - Helm charts of the CNF must be published in a helm registry and must not be used from local copies.
-     - :cite:t:`cnf-testsuite-helm_chart_published`
+     - :cite:t:`cnti-testsuite-helm_chart_published`
      - N/A
    * - ra2.app.012
      - Valid Helm chart
      - Helm charts of the CNF must be valid and should pass the helm lint validation.
-     - :cite:t:`cnf-testsuite-helm_chart_valid`
+     - :cite:t:`cnti-testsuite-helm_chart_valid`
      - N/A
    * - ra2.app.013
      - Rolling update
      - Rolling updates of the CNF must be possible using Kubernetes deployments.
-     - :cite:t:`cnf-testsuite-rolling_update`
+     - :cite:t:`cnti-testsuite-rolling_update`
      - N/A
    * - ra2.app.014
      - Rolling downgrade
      - Rolling downgrades of the CNF must be possible using Kubernetes deployments.
-     - :cite:t:`cnf-testsuite-rolling_downgrade`
+     - :cite:t:`cnti-testsuite-rolling_downgrade`
      - N/A
    * - ra2.app.015
      - CNI compatibility
      - The CNF must use CNI compatible networking plugins.
-     - :cite:t:`cnf-testsuite-cni_compatibility`
+     - :cite:t:`cnti-testsuite-cni_compatibility`
      - N/A
    * - ra2.app.016
      - Kubernetes API stability
      - The CNF must not use any Kubernetes alpha APIs, except for those required by the specifications in this chapter
        (for example, NFD).
-     - :cite:t:`cnf-testsuite-cni_compatibility`
+     - :cite:t:`cnti-testsuite-cni_compatibility`
      - N/A
    * - ra2.app.017
      - CNF resiliency (node drain)
      - The CNF must not lose data. It must continue to run and its readiness probe outcome must be Success, even in the
        event of a node drain and consequent rescheduling.
-     - :cite:t:`cnf-testsuite-node_drain`
+     - :cite:t:`cnti-testsuite-node_drain`
      - N/A
    * - ra2.app.018
      - CNF resiliency (network latency)
      - The CNF must not lose data. It must continue to run and its readiness probe outcome must be Success, even if
        network latency of up to 2000 ms occurs.
-     - :cite:t:`cnf-testsuite-pod_network_latency`
+     - :cite:t:`cnti-testsuite-pod_network_latency`
      - N/A
    * - ra2.app.019
      - CNF resiliency (pod delete)
      - The CNF must not lose data. It must continue to run and its readiness probe outcome must be Success, even if a
        pod delete occurs.
-     - :cite:t:`cnf-testsuite-disk_fill`
+     - :cite:t:`cnti-testsuite-disk_fill`
      - N/A
    * - ra2.app.020
      - CNF resiliency (pod memory hog)
      - The CNF must not lose data. It must continue to run and its readiness probe outcome must be Success, even if a
        pod memory hog occurs.
-     - :cite:t:`cnf-testsuite-pod_memory_hog`
+     - :cite:t:`cnti-testsuite-pod_memory_hog`
      - N/A
    * - ra2.app.021
      - CNF resiliency (pod I/O stress)
      - The CNF must not lose data. It must continue to run and its readiness probe outcome must be Success, even if pod
        I/O stress occurs.
-     - :cite:t:`cnf-testsuite-pod_io_stress`
+     - :cite:t:`cnti-testsuite-pod_io_stress`
      - N/A
    * - ra2.app.022
      - CNF resiliency (pod network corruption)
      - The CNF must not lose data. It must continue to run and its readiness probe outcome must be Success, even if pod
        network corruption occurs.
-     - :cite:t:`cnf-testsuite-pod_network_corruption`
+     - :cite:t:`cnti-testsuite-pod_network_corruption`
      - N/A
    * - ra2.app.023
      - CNF resiliency (pod network duplication)
      - The CNF must not lose data. It must continue to run and its readiness probe outcome must be Success, even if a
        pod network duplication occurs.
-     - :cite:t:`cnf-testsuite-pod_network_duplication`
+     - :cite:t:`cnti-testsuite-pod_network_duplication`
      - N/A
    * - ra2.app.024
      - CNF resiliency (pod DNS error)
@@ -825,17 +843,17 @@ Architecture, they must be implemented according to the following specifications
    * - ra2.app.025
      - CNF local storage
      - The CNF must not use local storage.
-     - :cite:t:`cnf-testsuite-no_local_volume_configuration`
+     - :cite:t:`cnti-testsuite-no_local_volume_configuration`
      - N/A
    * - ra2.app.026
      - Liveness probe
      - All Pods of the CNF must have livenessProbe defined.
-     - :cite:t:`cnf-testsuite-liveness`
+     - :cite:t:`cnti-testsuite-liveness`
      - N/A
    * - ra2.app.027
      - Readiness probe
      - All Pods of the CNF must have readinessProbe defined.
-     - :cite:t:`cnf-testsuite-readiness`
+     - :cite:t:`cnti-testsuite-readiness`
      - N/A
    * - ra2.app.028
      - No access to container daemon sockets
@@ -847,31 +865,31 @@ Architecture, they must be implemented according to the following specifications
      - No automatic service account mapping
      - Non-specified service accounts must not be automatically mapped. To prevent this, the
        automountServiceAccountToken: false flag must be set in all Pods of the CNF.
-     - :cite:t:`cnf-testsuite-service_account_mapping`
+     - :cite:t:`cnti-testsuite-service_account_mapping`
      - N/A
    * - ra2.app.030
      - No host network access
      - Host network must not be attached to any of the Pods of the CNF. The hostNetwork attribute of the Pod
        specifications must be False, or it should not be specified.
-     - :cite:t:`cnf-testsuite-host_network`
+     - :cite:t:`cnti-testsuite-host_network`
      - N/A
    * - ra2.app.031
      - Host process namespace separation
      - The Pods of the CNF must not share the host process ID namespace or the host IPC namespace. The Pod manifests
        must not have the hostPID or the hostIPC attribute set to true.
-     - :cite:t:`cnf-testsuite-host_pid_ipc_privileges`
+     - :cite:t:`cnti-testsuite-host_pid_ipc_privileges`
      - N/A
    * - ra2.app.032
      - Resource limits
      - All containers and namespaces of the CNF must have defined resource limits for at least the CPU and memory
        resources.
-     - :cite:t:`cnf-testsuite-resource_policies`
+     - :cite:t:`cnti-testsuite-resource_policies`
      - N/A
    * - ra2.app.033
      - Read only filesystem
      - All the containers of the CNF must have a read-only filesystem. The readOnlyRootFilesystem attribute of the Pods
        in their securityContext should be set to true.
-     - :cite:t:`cnf-testsuite-immutable_file_systems`
+     - :cite:t:`cnti-testsuite-immutable_file_systems`
      - N/A
    * - ra2.app.034
      - Container image tags
@@ -882,7 +900,7 @@ Architecture, they must be implemented according to the following specifications
    * - ra2.app.035
      - No hardcoded IP addresses
      - The CNF must not have any hardcoded IP addresses in its Pod specifications.
-     - :cite:t:`cnf-testsuite-hardcoded_ip_addresses_in_k8s_runtime_configuration`
+     - :cite:t:`cnti-testsuite-hardcoded_ip_addresses_in_k8s_runtime_configuration`
      - N/A
    * - ra2.app.036
      - No node ports
@@ -905,34 +923,34 @@ Architecture, they must be implemented according to the following specifications
    * - ra2.app.039
      - CNF image size
      - The different container images of the CNF should not be bigger than 5GB.
-     - :cite:t:`cnf-testsuite-reasonable_image_size`
+     - :cite:t:`cnti-testsuite-reasonable_image_size`
      - N/A
    * - ra2.app.040
      - CNF startup time
      - The startup time of the Pods of a CNF should not exceed 60 seconds, where the startup time is the time between
        the starting of the Pod and the readiness probe outcome registering Success.
-     - :cite:t:`cnf-testsuite-reasonable_startup_time`
+     - :cite:t:`cnti-testsuite-reasonable_startup_time`
      - N/A
    * - ra2.app.041
      - No privileged mode
      - Pods of the CNF must not run in privileged mode.
-     - :cite:t:`cnf-testsuite-privileged_containers`
+     - :cite:t:`cnti-testsuite-privileged_containers`
      - N/A
    * - ra2.app.042
      - No root user
      - Pods of the CNF must not run as a root user.
-     - :cite:t:`cnf-testsuite-non_root_user`
+     - :cite:t:`cnti-testsuite-non_root_user`
      - N/A
    * - ra2.app.043
      - No privilege escalation
      - None of the containers of the CNF should allow privilege escalation.
-     - :cite:t:`cnf-testsuite-privilege_escalation`
+     - :cite:t:`cnti-testsuite-privilege_escalation`
      - N/A
    * - ra2.app.044
      - Non-root user
      - All the Pods of the CNF must be able to execute with a non-root user having a non-root group. Both the
        runAsUser and the runAsGroup attributes must be set to a value greater than 999.
-     - :cite:t:`cnf-testsuite-non_root_containers`
+     - :cite:t:`cnti-testsuite-non_root_containers`
      - N/A
    * - ra2.app.045
      - Labels
@@ -950,7 +968,7 @@ Architecture, they must be implemented according to the following specifications
      - Host ports
      - The Pods of the CNF should not use the host ports. Using the host ports ties the CNF to a specific node, thereby
        making the CNF less portable and scalable.
-     - :cite:t:`cnf-testsuite-hostport_not_used`
+     - :cite:t:`cnti-testsuite-hostport_not_used`
      - N/A
    * - ra2.app.048
      - SELinux options
@@ -967,3 +985,212 @@ Additional required components
 
    This chapter should list any additional components needed to provide the services defined in the chapter
    :ref:`chapters/chapter03:infrastructure services` (for example, Prometheus).
+
+Platform service components
+---------------------------
+
+The architecture may support additional platform services, this chapter defines the requirements for the platform
+service componenets when the platform service is supported.
+
+.. list-table:: Platform service components requirements
+  :widths: 10 20 50 10
+  :header-rows: 1
+
+  * - Reference
+    - Platform service category
+    - Requirement
+    - RM reference
+  * - ra2.plat.001
+    - Data stores/databases
+    - The platform may support any open source datastore or database technology
+    - Reference Model :cite:p:`refmodel` Chapter 5.1.5
+  * - ra2.plat.002
+    - Streaming and messaging
+    - The platform may support any Streaming and messaging technology
+    - Reference Model :cite:p:`refmodel` Chapter 5.1.5
+  * - ra2.plat.003
+    - Load balancer and service proxy
+    - If an external load balancer is used it must be exposed via the `LoadBalancer` property of the Kubernetes
+      Service :cite:p:`k8s-service-load-balancer`
+    - Reference Model :cite:p:`refmodel` Chapter 5.1.5
+  * - ra2.plat.004
+    - Load balancer and service proxy
+    - If a load balancer is supported it must support workload resource scaling
+    - pas.lb.001 in Reference Model :cite:p:`refmodel` Chapter 5.1.5
+  * - ra2.plat.005
+    - Load balancer and service proxy
+    - If a load balancer is supported it must support resource resiliency
+    - pas.lb.002 in Reference Model :cite:p:`refmodel` Chapter 5.1.5
+  * - ra2.plat.006
+    - Load balancer and service proxy
+    - If a load balancer is supported it must support scaling and resiliency in the local environment
+    - pas.lb.003 in Reference Model :cite:p:`refmodel` Chapter 5.1.5
+  * - ra2.plat.007
+    - Load balancer and service proxy
+    - If a load balancer is supported it must support OSI Layer 3/4 load balancing
+    - pas.lb.004 in Reference Model :cite:p:`refmodel` Chapter 5.1.5
+  * - ra2.plat.008
+    - Load balancer and service proxy
+    - If a load balancer is supported it must support round-robin load balancing
+    - pas.lb.005 in Reference Model :cite:p:`refmodel` Chapter 5.1.5
+  * - ra2.plat.009
+    - Load balancer and service proxy
+    - If a load balancer is supported it must create event logs with the appropriate severity levels (catastrophic,
+      critical, and so on)
+    - pas.lb.006 in Reference Model :cite:p:`refmodel` Chapter 5.1.5
+  * - ra2.plat.010
+    - Load balancer and service proxy
+    - If a load balancer is supported it must support monitoring of endpoints
+    - pas.lb.006 in Reference Model :cite:p:`refmodel` Chapter 5.1.5
+  * - ra2.plat.011
+    - Load balancer and service proxy
+    - If a load balancer is supported it must support Direct Server Return (DSR)
+    - pas.lb.006 in Reference Model :cite:p:`refmodel` Chapter 5.1.5
+  * - ra2.plat.012
+    - Load balancer and service proxy
+    - If a load balancer is supported it must support support stateful TCP load balancing
+    - pas.lb.006 in Reference Model :cite:p:`refmodel` Chapter 5.1.5
+  * - ra2.plat.013
+    - Load balancer and service proxy
+    - If a load balancer is supported it must support support UDP load balancing
+    - pas.lb.006 in Reference Model :cite:p:`refmodel` Chapter 5.1.5
+  * - ra2.plat.014
+    - Load balancer and service proxy
+    - If a load balancer is supported it must support load balancing and the correct handling of fragmented packets
+    - pas.lb.006 in Reference Model :cite:p:`refmodel` Chapter 5.1.5
+  * - ra2.plat.015
+    - Service mesh
+    - If a service mesh is supported the service must should support the Service Mesh Interface
+      :cite:p:`sevice-mesh-interface`
+    - Reference Model :cite:p:`refmodel` Chapter 5.1.5
+  * - ra2.plat.016
+    - Monitoring
+    - The platform may support any open source monitoring technology
+    - Reference Model :cite:p:`refmodel` Chapter 5.1.5
+  * - ra2.plat.017
+    - Logging
+    - The platform may support any open source logging technology
+    - Reference Model :cite:p:`refmodel` Chapter 5.1.5
+  * - ra2.plat.018
+    - Logging
+    - If a logging framework is supported it must support log management from multiple distributed sources
+    - pas.lb.006 in Reference Model :cite:p:`refmodel` Chapter 5.1.5
+  * - ra2.plat.019
+    - Logging
+    - If a logging framework is supported it must manage log rotation at configurable periods
+    - pas.lb.006 in Reference Model :cite:p:`refmodel` Chapter 5.1.5
+  * - ra2.plat.020
+    - Logging
+    - If a logging framework is supported it must manage log rotation at configurable log file status (%full)
+    - pas.lb.006 in Reference Model :cite:p:`refmodel` Chapter 5.1.5
+  * - ra2.plat.021
+    - Logging
+    - If a logging framework is supported it must manage archival and retention of logs for configurable periods by
+      different log types
+    - pas.lb.006 in Reference Model :cite:p:`refmodel` Chapter 5.1.5
+  * - ra2.plat.022
+    - Logging
+    - If a logging framework is supported it must ensure log file integrity (no changes, particularlychanges that may
+      affect the completeness, consistency, and accuracy, including event times, of the log file content)
+      different log types
+    - pas.lb.006 in Reference Model :cite:p:`refmodel` Chapter 5.1.5
+  * - ra2.plat.023
+    - Logging
+    - If a logging framework is supported it must monitor log rotation and log archival processes
+    - pas.lb.006 in Reference Model :cite:p:`refmodel` Chapter 5.1.5
+  * - ra2.plat.024
+    - Logging
+    - If a logging framework is supported it must monitor the logging status of all the log sources
+    - pas.lb.006 in Reference Model :cite:p:`refmodel` Chapter 5.1.5
+  * - ra2.plat.025
+    - Logging
+    - If a logging framework is supported it must ensure that the clock of each logging host is synchronized to a common
+      time source
+    - pas.lb.006 in Reference Model :cite:p:`refmodel` Chapter 5.1.5
+  * - ra2.plat.026
+    - Logging
+    - If a logging framework is supported it must support the reconfiguring of logging as needed, based on policy
+      changes, technology changes, and other factors
+    - pas.lb.006 in Reference Model :cite:p:`refmodel` Chapter 5.1.5
+  * - ra2.plat.027
+    - Logging
+    - If a logging framework is supported it must support the documenting and reporting of anomalies in log settings,
+      configurations, and processes
+    - pas.lb.006 in Reference Model :cite:p:`refmodel` Chapter 5.1.5
+  * - ra2.plat.028
+    - Logging
+    - If a logging framework is supported it must support the correlating of entries from multiple logs that relate to
+      the same event
+    - pas.lb.006 in Reference Model :cite:p:`refmodel` Chapter 5.1.5
+  * - ra2.plat.029
+    - Logging
+    - If a logging framework is supported it must support the correlating of multiple log entries from a single source
+      or multiple sources, based on logged values (for example, event types, timestamps, and IP addresses)
+    - pas.lb.006 in Reference Model :cite:p:`refmodel` Chapter 5.1.5
+  * - ra2.plat.030
+    - Application definition and image build
+    - Kubernetes Application package managers must follow the specifications defined in Chapter 4.9
+      :ref:`chapters/chapter04:kubernetes application package managers`
+    - Reference Model :cite:p:`refmodel` Chapter 5.1.5
+  * - ra2.plat.031
+    - CI/CD
+    - The platform may support any open source CI/CD technology
+    - Reference Model :cite:p:`refmodel` Chapter 5.1.5
+  * - ra2.plat.032
+    - Ingress/egress controllers
+    - The platform may support any open source Ingress/egress controllers technology
+    - Reference Model :cite:p:`refmodel` Chapter 5.1.5
+  * - ra2.plat.033
+    - Ingress/egress controllers
+    - The platform may support any open source Ingress/egress controllers technology
+    - Reference Model :cite:p:`refmodel` Chapter 5.1.5
+  * - ra2.plat.034
+    - Ingress/egress controllers
+    - If an egress controller is supported it must provide fixed and consistent source IP addresses for any given egress
+      traffic.
+    -
+  * - ra2.plat.035
+    - Ingress/egress controllers
+    - If an egress controller is supported it must support several source IP addresses on egress control.
+    -
+  * - ra2.plat.036
+    - Ingress/egress controllers
+    - If an egress controller is supported it must provide a way to preserve the client IP address on egress control
+    -
+  * - ra2.plat.037
+    - Ingress/egress controllers
+    - If an ingress and egress controller is supported it must support symmetric IP/VIP for ingress and egress
+    -
+  * - ra2.plat.038
+    - Ingress/egress controllers
+    - If an egress controller is supported it must provide capabilities to route and isolate egress traffic based on
+      traffic types (OAM, Signaling, etc), connected to e.g., to separate VRFs
+    -
+  * - ra2.plat.039
+    - Ingress/egress controllers
+    - If an egress controller is supported it must support VLAN tagging for egress traffic
+    -
+  * - ra2.plat.040
+    - Ingress/egress controllers
+    - If an egress controller is supported it must support the separation for overlapping destination address.
+    -
+  * - ra2.plat.041
+    - Network service
+    - The platform may support any open source network service technology
+    - Reference Model :cite:p:`refmodel` Chapter 5.1.5
+  * - ra2.plat.042
+    - Coordination and service discovery
+    - The platform may support any open source coordination and service discovery technology
+    - Reference Model :cite:p:`refmodel` Chapter 5.1.5
+  * - ra2.plat.043
+    - Automation and configuration
+    - The platform may support any open source automation and configuration technology
+    - Reference Model :cite:p:`refmodel` Chapter 5.1.5
+  * - ra2.plat.044
+    - Key management
+    - The platform may support any open source key management technology
+    - Reference Model :cite:p:`refmodel` Chapter 5.1.5
+  * - ra2.plat.045
+    - Tracing
+    - The platform may support any open source tracing technology
+    - Reference Model :cite:p:`refmodel` Chapter 5.1.5
