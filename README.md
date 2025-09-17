@@ -22,4 +22,3 @@ please follow [this](https://github.com/anuket-project/anuket-specifications/blo
 # Badges
 
 [![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/anuket-project/RA2/badge)](https://scorecard.dev/viewer/?uri=github.com/anuket-project/RA2)
-
